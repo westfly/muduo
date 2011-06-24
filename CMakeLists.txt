@@ -9,18 +9,18 @@ endif()
 set(CXX_FLAGS
  -g
  # -DVALGRIND
- # -DMUDUO_STD_STRING
+ -DMUDUO_STD_STRING
  -Wall
  -Wextra
  -Werror
  -Wconversion
  -Wno-unused-parameter
- -Wold-style-cast
+ # -Wold-style-cast
  -Woverloaded-virtual
  -Wpointer-arith
- -Wshadow
+ # -Wshadow
  -Wwrite-strings
- -march=native
+ -march=nocona
  # -MMD
  # -std=c++0x
  -rdynamic
@@ -30,7 +30,7 @@ if(CMAKE_BUILD_BITS EQUAL 32)
 endif()
 string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
-set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_COMPILER "g++4")
 #set(CMAKE_CXX_COMPILER "icpc")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -finline-limit=1000 -DNDEBUG")
