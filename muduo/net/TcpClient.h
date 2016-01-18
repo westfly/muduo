@@ -31,7 +31,7 @@ class TcpClient : boost::noncopyable
   // TcpClient(EventLoop* loop, const string& host, uint16_t port);
   TcpClient(EventLoop* loop,
             const InetAddress& serverAddr,
-            const string& name);
+            const string& nameArg);
   ~TcpClient();  // force out-line dtor, for scoped_ptr members.
 
   void connect();
@@ -48,6 +48,9 @@ class TcpClient : boost::noncopyable
   bool retry() const;
   void enableRetry() { retry_ = true; }
 
+  const string& name() const
+  { return name_; }
+
   /// Set connection callback.
   /// Not thread safe.
   void setConnectionCallback(const ConnectionCallback& cb)
@@ -63,6 +66,15 @@ class TcpClient : boost::noncopyable
   void setWriteCompleteCallback(const WriteCompleteCallback& cb)
   { writeCompleteCallback_ = cb; }
 
+#ifdef __GXX_EXPERIMENTAL_CXX0X__
+  void setConnectionCallback(ConnectionCallback&& cb)
+  { connectionCallback_ = std::move(cb); }
+  void setMessageCallback(MessageCallback&& cb)
+  { messageCallback_ = std::move(cb); }
+  void setWriteCompleteCallback(WriteCompleteCallback&& cb)
+  { writeCompleteCallback_ = std::move(cb); }
+#endif
+
  private:
   /// Not thread safe, but in loop
   void newConnection(int sockfd);
@@ -75,12 +87,12 @@ class TcpClient : boost::noncopyable
   ConnectionCallback connectionCallback_;
   MessageCallback messageCallback_;
   WriteCompleteCallback writeCompleteCallback_;
-  bool retry_;   // atmoic
+  bool retry_;   // atomic
   bool connect_; // atomic
   // always in loop thread
   int nextConnId_;
   mutable MutexLock mutex_;
-  TcpConnectionPtr connection_; // @BuardedBy mutex_
+  TcpConnectionPtr connection_; // @GuardedBy mutex_
 };
 
 }

@@ -11,7 +11,6 @@
 
 #include <utility>
 
-#include <mcheck.h>
 #include <stdio.h>
 #include <unistd.h>
 
@@ -88,7 +87,7 @@ class Client : boost::noncopyable
          int timeout,
          int threadCount)
     : loop_(loop),
-      threadPool_(loop),
+      threadPool_(loop, "pingpong-client"),
       sessionCount_(sessionCount),
       timeout_(timeout)
   {
